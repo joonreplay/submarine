@@ -2,28 +2,17 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>잠수함 출동 시뮬레이션</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <title>잠수함 작전</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- 배경 이미지 -->
-    <div id="background-container" class="background-container"></div>
-    
-    <!-- 캐릭터 이미지 컨테이너 -->
-    <div id="game-character-container" class="character-container">
-        <img id="character-image" src="https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/972addea-d73f-4715-a61f-f6a03ff7633e.png" alt="캐릭터" class="character-image">
-    </div>
-
-    <!-- 부유하는 텍스트를 위한 컨테이너 -->
-    <div id="floating-text-container" class="floating-text-container"></div>
-
     <!-- 시작 화면 -->
     <div id="start-screen" class="screen active">
         <div class="container">
-            <h1 class="game-title">잠수함 출동 시뮬레이션</h1>
-            <p class="game-description">계급을 선택하고, 출동 준비부터 임무 수행까지<br>잠수함 승조원의 삶을 체험해보세요</p>
-            <button id="start-btn" class="btn btn--primary btn--lg">시작</button>
+            <h1 class="game-title">잠수함 작전</h1>
+            <p class="game-description">터치로 조작하여 적 잠수함을 격침하고<br>임무를 완수하세요!</p>
+            <button id="start-btn" class="btn btn--primary btn--lg">게임 시작</button>
         </div>
     </div>
 
@@ -32,194 +21,122 @@
         <div class="container">
             <h2>계급을 선택하세요</h2>
             <div class="rank-selection">
-                <div class="rank-card" data-rank="부사관">
-                    <h3>부사관 (하사)</h3>
-                    <p class="rank-description">실무 전문가</p>
+                <div class="rank-card" data-rank="beginner">
+                    <h3>신병</h3>
+                    <p class="rank-description">체력 높음, 쉬운 임무</p>
                     <div class="stats">
-                        <div class="stat-item">체력: 70</div>
-                        <div class="stat-item">정신력: 60</div>
-                        <div class="stat-item">기술력: 50</div>
+                        <div class="stat-item">체력: 100</div>
+                        <div class="stat-item">어뢰: 20발</div>
+                        <div class="stat-item">속도: 보통</div>
                     </div>
-                    <div class="days">출동일까지: 14일</div>
-                    <button class="btn btn--outline select-rank-btn" data-rank="부사관">선택 (1)</button>
+                    <button class="btn btn--outline select-rank-btn" data-rank="beginner">선택</button>
                 </div>
-                <div class="rank-card" data-rank="장교">
-                    <h3>장교 (대위)</h3>
-                    <p class="rank-description">지휘 장교</p>
+                <div class="rank-card" data-rank="veteran">
+                    <h3>베테랑</h3>
+                    <p class="rank-description">균형잡힌 능력, 보통 임무</p>
+                    <div class="stats">
+                        <div class="stat-item">체력: 80</div>
+                        <div class="stat-item">어뢰: 15발</div>
+                        <div class="stat-item">속도: 빠름</div>
+                    </div>
+                    <button class="btn btn--outline select-rank-btn" data-rank="veteran">선택</button>
+                </div>
+                <div class="rank-card" data-rank="ace">
+                    <h3>에이스</h3>
+                    <p class="rank-description">고속 기동, 어려운 임무</p>
                     <div class="stats">
                         <div class="stat-item">체력: 60</div>
-                        <div class="stat-item">정신력: 70</div>
-                        <div class="stat-item">기술력: 70</div>
+                        <div class="stat-item">어뢰: 10발</div>
+                        <div class="stat-item">속도: 매우빠름</div>
                     </div>
-                    <div class="days">출동일까지: 10일</div>
-                    <button class="btn btn--outline select-rank-btn" data-rank="장교">선택 (2)</button>
-                </div>
-                <div class="rank-card" data-rank="함장">
-                    <h3>함장 (중령)</h3>
-                    <p class="rank-description">함정 지휘관</p>
-                    <div class="stats">
-                        <div class="stat-item">체력: 50</div>
-                        <div class="stat-item">정신력: 80</div>
-                        <div class="stat-item">기술력: 90</div>
-                    </div>
-                    <div class="days">출동일까지: 7일</div>
-                    <button class="btn btn--outline select-rank-btn" data-rank="함장">선택 (3)</button>
+                    <button class="btn btn--outline select-rank-btn" data-rank="ace">선택</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 출동 준비 화면 -->
-    <div id="preparation-screen" class="screen">
+    <!-- 임무 선택 화면 -->
+    <div id="mission-screen" class="screen">
         <div class="container">
-            <div class="status-bar">
-                <div class="days-left">
-                    <h3>D-<span id="days-remaining">0</span></h3>
-                </div>
-                <div class="stats-display">
-                    <div class="stat-bar">
-                        <label>체력</label>
-                        <div class="progress-bar">
-                            <div id="health-bar" class="progress-fill"></div>
-                            <span id="health-value">0</span>
-                            <div id="health-change" class="stat-change"></div>
-                        </div>
-                    </div>
-                    <div class="stat-bar">
-                        <label>정신력</label>
-                        <div class="progress-bar">
-                            <div id="mental-bar" class="progress-fill"></div>
-                            <span id="mental-value">0</span>
-                            <div id="mental-change" class="stat-change"></div>
-                        </div>
-                    </div>
-                    <div class="stat-bar">
-                        <label>기술력</label>
-                        <div class="progress-bar">
-                            <div id="skill-bar" class="progress-fill"></div>
-                            <span id="skill-value">0</span>
-                            <div id="skill-change" class="stat-change"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <h3>오늘의 일정을 선택하세요 (3개)</h3>
-            <div class="selected-activities">
-                <div>선택된 활동: <span id="selected-count">0</span>/3</div>
-                <div id="selected-list"></div>
-            </div>
-            
-            <div class="activities-container">
-                <div class="activity-category">
-                    <h4>훈련</h4>
-                    <div class="activity-buttons" id="training-activities"></div>
-                </div>
-                <div class="activity-category">
-                    <h4>정비</h4>
-                    <div class="activity-buttons" id="maintenance-activities"></div>
-                </div>
-                <div class="activity-category">
-                    <h4>브리핑</h4>
-                    <div class="activity-buttons" id="briefing-activities"></div>
-                </div>
-                <div class="activity-category">
-                    <h4>개인정비</h4>
-                    <div class="activity-buttons" id="personal-activities"></div>
-                </div>
-            </div>
-            
-            <button id="next-day-btn" class="btn btn--primary btn--lg" disabled>다음 날</button>
-        </div>
-    </div>
-
-    <!-- 액션 게임 화면 -->
-    <div id="action-game-screen" class="screen">
-        <div class="action-container">
-            <!-- 게임 UI -->
-            <div class="game-ui">
-                <div class="ui-top">
-                    <div class="health-display">
-                        <label>체력</label>
-                        <div class="action-health-bar">
-                            <div id="action-health-fill" class="action-health-fill"></div>
-                            <span id="action-health-text">100</span>
-                        </div>
-                    </div>
+            <h2>임무를 선택하세요</h2>
+            <div id="mission-list" class="mission-list">
+                <div class="mission-card" data-mission="0">
+                    <h3>생존 훈련</h3>
+                    <p class="mission-description">적 잠수함을 격침하고 생존하세요</p>
                     <div class="mission-info">
-                        <div id="mission-title">정찰 임무</div>
-                        <div id="mission-objective">적 잠수함 3대 격침</div>
+                        <div>시간: 30초</div>
+                        <div>적: 3대</div>
                     </div>
-                    <div class="game-stats">
-                        <div>어뢰: <span id="torpedo-count">10</span></div>
-                        <div>점수: <span id="action-score">0</span></div>
-                        <div>특수무기: <span id="special-weapon-count">0</span></div>
+                    <button class="btn btn--primary start-mission-btn" data-mission="0">시작</button>
+                </div>
+                <div class="mission-card" data-mission="1">
+                    <h3>호위 작전</h3>
+                    <p class="mission-description">보급선을 보호하며 임무를 수행하세요</p>
+                    <div class="mission-info">
+                        <div>시간: 45초</div>
+                        <div>적: 5대</div>
                     </div>
+                    <button class="btn btn--primary start-mission-btn" data-mission="1">시작</button>
                 </div>
-                
-                <!-- 미니맵 -->
-                <div class="minimap">
-                    <canvas id="minimap-canvas" width="150" height="120"></canvas>
-                </div>
-            </div>
-
-            <!-- 게임 캔버스 -->
-            <div class="game-canvas-container" style="position: relative; height: 600px;">
-                <canvas id="game-canvas" width="800" height="600"></canvas>
-                
-                <!-- 게임 오버레이 -->
-                <div id="game-overlay" class="game-overlay hidden">
-                    <div class="overlay-content">
-                        <h3 id="overlay-title">미션 완료!</h3>
-                        <p id="overlay-message">모든 적을 격침했습니다!</p>
-                        <button id="next-mission-btn" class="btn btn--primary">다음 미션</button>
-                        <button id="continue-game-btn" class="btn btn--secondary">게임 종료</button>
+                <div class="mission-card" data-mission="2">
+                    <h3>섬멸 작전</h3>
+                    <p class="mission-description">적 기지를 파괴하고 모든 적을 격침하세요</p>
+                    <div class="mission-info">
+                        <div>시간: 60초</div>
+                        <div>적: 8대</div>
                     </div>
+                    <button class="btn btn--primary start-mission-btn" data-mission="2">시작</button>
                 </div>
-            </div>
-
-            <!-- 조작법 안내 -->
-            <div class="controls-help">
-                <div>이동: 방향키 또는 WASD</div>
-                <div>어뢰 발사: 스페이스바</div>
-                <div>특수무기: Shift</div>
-                <div>일시정지: P</div>
             </div>
         </div>
     </div>
 
-    <!-- 게임 종료 화면 -->
-    <div id="end-screen" class="screen">
-        <div class="container">
-            <h2>임무 완료!</h2>
-            <div class="final-results">
-                <div class="final-score">최종 점수: <span id="final-score">0</span></div>
-                <div class="final-rank">등급: <span id="final-rank">신참 승조원</span></div>
-                <div class="rank-description" id="rank-description">
-                    더 많은 경험을 쌓아 숙련된 승조원이 되어보세요!
+    <!-- 게임 화면 -->
+    <div id="game-screen" class="screen">
+        <!-- 게임 UI -->
+        <div class="game-ui">
+            <div class="ui-top">
+                <div class="health-bar">
+                    <span>체력</span>
+                    <div class="progress-bar">
+                        <div id="health-fill" class="progress-fill"></div>
+                    </div>
+                    <span id="health-text">100</span>
+                </div>
+                <div class="score">점수: <span id="score">0</span></div>
+                <div class="torpedo-count">어뢰: <span id="torpedo-count">20</span></div>
+                <div class="timer">시간: <span id="timer">30</span></div>
+            </div>
+        </div>
+
+        <!-- 게임 캔버스 -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- 모바일 조작 버튼들 -->
+        <div class="mobile-controls">
+            <!-- 가상 조이스틱 -->
+            <div id="joystick" class="joystick">
+                <div id="joystick-knob" class="joystick-knob"></div>
+            </div>
+            
+            <!-- 발사 버튼 -->
+            <button id="fire-btn" class="fire-btn">발사</button>
+            
+            <!-- 특수 버튼 -->
+            <button id="special-btn" class="special-btn">특수</button>
+        </div>
+
+        <!-- 게임 오버/일시정지 오버레이 -->
+        <div id="game-overlay" class="game-overlay hidden">
+            <div class="overlay-content">
+                <h2 id="overlay-title">게임 오버</h2>
+                <p id="overlay-message">임무를 완수하지 못했습니다.</p>
+                <div id="final-score">최종 점수: 0</div>
+                <div class="overlay-buttons">
+                    <button id="restart-btn" class="btn btn--primary">다시 시작</button>
+                    <button id="menu-btn" class="btn btn--outline">메인 메뉴</button>
                 </div>
             </div>
-            <button id="restart-btn" class="btn btn--primary btn--lg">다시 시작</button>
-        </div>
-    </div>
-
-    <!-- 이벤트 팝업 -->
-    <div id="event-popup" class="modal hidden">
-        <div class="modal-content">
-            <h3 id="event-title">이벤트</h3>
-            <p id="event-description">이벤트 내용</p>
-            <div id="event-result"></div>
-            <button id="close-event-btn" class="btn btn--primary">확인</button>
-        </div>
-    </div>
-
-    <!-- 게임 일시정지 팝업 -->
-    <div id="pause-popup" class="modal hidden">
-        <div class="modal-content">
-            <h3>게임 일시정지</h3>
-            <p>P 키를 눌러 게임을 계속하세요</p>
-            <button id="resume-game-btn" class="btn btn--primary">계속하기</button>
-            <button id="quit-game-btn" class="btn btn--secondary">게임 종료</button>
         </div>
     </div>
 
